@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  identifier String   @unique
+  password   String
+  role       String
+  messages   Message[]
+  last_assigned DateTime?
+  conversations Conversation[] @relation("AgentConversations")
+}
+
+model Message {
+  id             Int           @id @default(autoincrement())
+  message_id     String        @unique
+  content        String
+  agent_id       Int?
+  assigned_at    DateTime?
+  responded      Boolean       @default(false)
+  expired        Boolean       @default(false)
+  conversation_id Int
+  conversation   Conversation  @relation(fields: [conversation_id], references: [id])
+  agent          User?         @relation(fields: [agent_id], references: [id])
+}
+
+model Conversation {
+  id           Int       @id @default(autoincrement())
+  message_id   String    @unique
+  client_name  String?
+  created_at   DateTime  @default(now())
+  assigned_at  DateTime?
+  agent_id     Int?
+  agent        User?     @relation("AgentConversations", fields: [agent_id], references: [id])
+  responded    Boolean   @default(false)
+  expired      Boolean   @default(false)
+  messages     Message[]
+}
+
+
+
