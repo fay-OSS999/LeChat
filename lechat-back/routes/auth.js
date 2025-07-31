@@ -3,19 +3,21 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-router.post('/login', async (req, res) => {
+router.post("/auth/login", async (req, res) => {
   const { identifier, password } = req.body;
+
   const user = await prisma.user.findUnique({ where: { identifier } });
   if (!user || user.password !== password) {
-    return res.status(401).json({ message: 'Identifiants invalides' });
+    return res.status(401).json({ message: "Identifiants invalides" });
   }
-  const token = JSON.stringify({ id: user.id, role: user.role });
-  res.cookie('lechat_token', token, {
+
+  // Stockage simple (à remplacer + tard par JWT/Session)
+  res.cookie("lechat_token", JSON.stringify({ id: user.id, role: user.role }), {
     httpOnly: true,
-    sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: "Lax",
   });
-  res.json({ message: 'Connecté', user });
+
+  res.json({ message: "Connecté", user });
 });
 
 router.get('/agent/:agent_id', async (req, res) => {

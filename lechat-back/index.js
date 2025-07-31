@@ -1,35 +1,26 @@
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const { PrismaClient } = require("@prisma/client");
 
-const authRoutes = require('./routes/auth');
-const messagesRoutes = require('./routes/messages');
-const incomingRoutes = require('./routes/incoming');
-
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const authRoutes = require("./routes/auth");
+const messageRoutes = require("./routes/messages");
+const incomingRoutes = require("./routes/incoming");
 
 const app = express();
+const prisma = new PrismaClient();
 const PORT = 3001;
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes montées
-app.use('/api/auth', authRoutes);
-app.use('/api/messages', messagesRoutes);
-app.use('/api/incoming', incomingRoutes);
+// Routes
+app.use("/api", authRoutes);
+app.use("/api", messageRoutes);
+app.use("/api", incomingRoutes);
 
-// Lancement du serveur
+// Démarrage
 app.listen(PORT, () => {
-  console.log(`✅ Backend démarré sur http://localhost:${PORT}`);
+  console.log(`✅ Backend running at http://localhost:${PORT}`);
 });
-
-const checkExpiredMessagesAndRedistribute = require('./messageWatcher');
-setInterval(() => {
-  checkExpiredMessagesAndRedistribute();
-}, 30000);
