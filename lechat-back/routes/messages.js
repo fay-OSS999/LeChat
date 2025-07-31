@@ -30,20 +30,17 @@ router.post('/', async (req, res) => {
 
 // 🔹 GET /api/messages/:agent_id - liste des messages pour un agent
 router.get('/:agent_id', async (req, res) => {
-  let { agent_id } = req.params;
-  agent_id = parseInt(agent_id, 10);
-  if (isNaN(agent_id)) {
-    return res.status(400).json({ error: "agent_id doit être un nombre" });
-  }
+  const { agent_id } = req.params;
   try {
     const messages = await prisma.message.findMany({
-      where: { agent_id },
-      orderBy: { assigned_at: "desc" }
+      where: { agent_id: parseInt(agent_id, 10) },
+      orderBy: { assigned_at: 'desc' },
     });
     res.json({ messages });
   } catch (error) {
-    res.status(500).json({ error: "Erreur lors de la récupération des messages" });
+    res.status(500).json({ error: 'Erreur lors de la récupération des messages' });
   }
 });
 
 module.exports = router;
+

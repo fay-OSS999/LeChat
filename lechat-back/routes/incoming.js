@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client'); 
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 router.post('/', async (req, res) => {
@@ -8,7 +8,7 @@ router.post('/', async (req, res) => {
     const { client_name } = req.body;
 
     if (!client_name) {
-      return res.status(400).json({ message: "Le nom du client est requis" });
+      return res.status(400).json({ message: 'Le nom du client est requis' });
     }
 
     const availableAgent = await prisma.user.findFirst({ where: { role: 'agent' } });
@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: 'Conversation et message initial créés',
       conversation,
       message,
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
 
   } catch (err) {
     console.error('Erreur dans /incoming :', err);
-    return res.status(500).json({ message: 'Erreur serveur' });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 

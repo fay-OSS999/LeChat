@@ -24,13 +24,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/incoming', incomingRoutes);
 
-// Test de base de données
-async function test() {
-  const users = await prisma.user.findMany();
-  console.log(users);
-}
-test();
-
 // Lancement du serveur
 app.listen(PORT, () => {
   console.log(`✅ Backend démarré sur http://localhost:${PORT}`);
